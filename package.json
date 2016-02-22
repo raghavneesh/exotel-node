@@ -1,6 +1,6 @@
 {
   "name": "exotel-node",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A NodeJs wrapper for Exotel APIs",
   "main": "exotel.js",
   "scripts": {
@@ -22,5 +22,8 @@
     "api",
     "node"
   ],
-  "homepage": "https://github.com/sidhantpanda/exotel-node#readme"
+  "homepage": "https://github.com/sidhantpanda/exotel-node#readme",
+  "dependencies": {
+    "request": "^2.69.0"
+  }
 }
