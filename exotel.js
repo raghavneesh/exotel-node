@@ -1,12 +1,6 @@
 var request = require('request');
 
 module.exports = {
-  config: {
-    'exotel_sid'    : "YOUR-API-KEY",
-    'exotel_token'  : "YOUR-AUTH-TOKEN",
-    'exophone'      : "YOUR-EXOPHONE-NUMBER",
-  },
-
   init : function (S_ID, TOKEN, EXOPHONE) {
     this.exotel_sid   = S_ID;
     this.exotel_token = TOKEN;
