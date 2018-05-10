@@ -1,23 +1,27 @@
-var request     = require('request');
+var request = require('request');
 var parseString = require('xml2js').parseString;
 
 module.exports = {
-  init : function (S_ID, TOKEN, EXOPHONE) {
-    this.exotel_sid   = S_ID;
+  init: function (S_ID, TOKEN, EXOPHONE) {
+    this.exotel_sid = S_ID;
     this.exotel_token = TOKEN;
-    this.exophone     = EXOPHONE;
+    this.exophone = EXOPHONE;
   },
 
-  sendSMS : function(toNumber, message, callback) {
-    var url = 'https://' + this.exotel_sid + ':' + this.exotel_token + '@twilix.exotel.in/v1/Accounts/' + this.exotel_sid +'/Sms/send';
+  sendSMS: function (toNumber, message, callback, requestParams) {
+    var url = 'https://' + this.exotel_sid + ':' + this.exotel_token + '@twilix.exotel.in/v1/Accounts/' + this.exotel_sid + '/Sms/send';
 
     var params = {
-      From  : this.exophone,
-      To    : toNumber,
-      Body  : message,
+      From: this.exophone,
+      To: toNumber,
+      Body: message,
+    };
+    if (requestParams && typeof requestParams === 'object') {
+      for (var key in requestParams)
+        params[key] = requestParams[key];
     }
-
-    makeRequest(url, params, function(error, response) {
+    console.log('Exotel request', JSON.stringify(params));
+    makeRequest(url, params, function (error, response) {
       if (error) {
         callback(error, null);
       } else {
@@ -26,17 +30,17 @@ module.exports = {
     });
   },
 
-  connectCall : function(firstNumber, secondNumber, callback) {
-    var url = 'https://' + this.exotel_sid + ':' + this.exotel_token + '@twilix.exotel.in/v1/Accounts/' + this.exotel_sid +'/Calls/connect';
+  connectCall: function (firstNumber, secondNumber, callback) {
+    var url = 'https://' + this.exotel_sid + ':' + this.exotel_token + '@twilix.exotel.in/v1/Accounts/' + this.exotel_sid + '/Calls/connect';
 
     var params = {
-      From     : firstNumber,
-      To       : secondNumber,
-      CallerId : this.exophone,
-      CallType : 'trans',
+      From: firstNumber,
+      To: secondNumber,
+      CallerId: this.exophone,
+      CallType: 'trans',
     }
 
-    makeRequest(url, params, function(error, response) {
+    makeRequest(url, params, function (error, response) {
       if (error) {
         callback(error, null);
       } else {
@@ -45,13 +49,13 @@ module.exports = {
     });
   },
 
-  getCallDetails : function(id, callback) {
-    var url = 'https://' + this.exotel_sid + ':' + this.exotel_token + '@twilix.exotel.in/v1/Accounts/' + this.exotel_sid +'/Calls/' + id;
+  getCallDetails: function (id, callback) {
+    var url = 'https://' + this.exotel_sid + ':' + this.exotel_token + '@twilix.exotel.in/v1/Accounts/' + this.exotel_sid + '/Calls/' + id;
     request.get(url, function (error, response, body) {
       if (error) {
         callback(error, response);
       } else {
-        parseString(response.body, {explicitArray: false}, function(err, result) {
+        parseString(response.body, { explicitArray: false }, function (err, result) {
           callback(null, result.TwilioResponse.Call);
         });
       }
@@ -60,11 +64,11 @@ module.exports = {
 }
 
 function makeRequest(url, params, callback) {
-  request.post(url, {form: params}, function (error, response, body) {
+  request.post(url, { form: params }, function (error, response, body) {
     if (error) {
       callback(error, response);
     } else {
-      parseString(response.body, {explicitArray: false}, function(err, result) {
+      parseString(response.body, { explicitArray: false }, function (err, result) {
         callback(null, result);
       });
     }
